@@ -145,3 +145,4 @@ class Visualizer:
 
         print("\nĐã vẽ đồ thị hồi quy tuyến tính.")
         print("Đã lưu biểu đồ vào file: regression_chart.png")
+        display(Image("/content/python-linear-regression-k9/regression_chart.png"))
