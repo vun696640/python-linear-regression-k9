@@ -34,10 +34,10 @@ class ModelEvaluator:
         r2 = r2_score(y_test, predictions)
 
         print("\n===== KẾT QUẢ ĐÁNH GIÁ MÔ HÌNH =====")
-        print("MAE  - Sai số tuyệt đối trung bình:", mae)
-        print("MSE  - Sai số bình phương trung bình:", mse)
-        print("RMSE - Căn bậc hai của MSE:", rmse)
-        print("R2 Score - Mức độ giải thích dữ liệu:", r2)
+        print("MAE  - Sai số tuyệt đối trung bình:", f"{mae:,.0f} đồng")
+        print("MSE  - Sai số bình phương trung bình:", f"{mse:,.0f}")
+        print("RMSE - Căn bậc hai của MSE:", f"{rmse:,.0f} đồng")
+        print("R2 Score - Mức độ giải thích dữ liệu:", round(r2, 4))
 
         return mae, mse, rmse, r2
 
@@ -47,12 +47,17 @@ class ModelEvaluator:
         """
 
         result = pd.DataFrame({
-            "Thực tế": y_test.values,
-            "Dự đoán": predictions,
+            "Tiền điện thực tế": y_test.values,
+            "Tiền điện dự đoán": predictions,
             "Sai số": y_test.values - predictions
         })
 
+        # Làm tròn đến hàng đồng
+        result["Tiền điện thực tế"] = result["Tiền điện thực tế"].round().astype(int)
+        result["Tiền điện dự đoán"] = result["Tiền điện dự đoán"].round().astype(int)
+        result["Sai số"] = result["Sai số"].round().astype(int)
+
         print("\n===== SO SÁNH THỰC TẾ VÀ DỰ ĐOÁN =====")
-        print(result)
+        print(result.to_string(index=False))
 
         return result
