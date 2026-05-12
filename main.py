@@ -46,7 +46,8 @@ def main():
     file_path = "data/energy_training.csv"
 
     # Cột cần dự đoán
-    target_column = "kWh"
+    # Mục tiêu đúng: dùng kWh để dự đoán số tiền phải trả
+    target_column = "Số tiền phải trả"
 
     # Bước 1: Import dữ liệu
     data = data_processor.import_file(file_path)
@@ -59,6 +60,8 @@ def main():
     print(list(data.columns))
 
     # Bước 4: Tách dữ liệu đầu vào và đầu ra
+    # X sẽ là các cột còn lại, trong bài này nên là kWh
+    # y sẽ là Số tiền phải trả
     X, y = data_processor.split_features_target(data, target_column)
 
     # Bước 5: Chia dữ liệu train/test
@@ -89,17 +92,18 @@ def main():
     )
 
     # Bước 11: Vẽ đồ thị hồi quy tuyến tính
-    # Vì dữ liệu chỉ có 1 biến đầu vào là "Số tiền phải trả",
-    # ta dùng cột này làm trục X.
+    # Trục X: kWh
+    # Trục Y: Số tiền phải trả
     visualizer.plot_regression_line(
         X=X,
         y=y,
         model=model,
-        feature_column="Số tiền phải trả",
+        feature_column="kWh",
         target_column=target_column
     )
 
     # Bước 12: Kiểm thử với dữ liệu mới
+    # Người dùng nhập kWh, mô hình dự đoán số tiền phải trả
     tester.test_new_data(model, X.columns)
 
 
