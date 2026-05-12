@@ -59,9 +59,23 @@ class DataProcessor:
         print("\n===== DỮ LIỆU BAN ĐẦU =====")
         print(data.head())
 
+        # Xóa khoảng trắng thừa trong tên cột
+        data.columns = data.columns.str.strip()
+
         # Xóa cột số thứ tự nếu tồn tại
         if "#" in data.columns:
             data = data.drop(columns=["#"])
+
+        # Kiểm tra đúng cột cần dùng
+        required_columns = ["kWh", "Số tiền phải trả"]
+
+        for column in required_columns:
+            if column not in data.columns:
+                raise ValueError(f"Không tìm thấy cột bắt buộc: {column}")
+
+        # Chỉ giữ đúng 2 cột cần dùng cho mô hình
+        # Tránh lấy nhầm cột khác như tháng, hộ gia đình, số thứ tự...
+        data = data[required_columns]
 
         # Chuyển toàn bộ dữ liệu sang dạng số
         for column in data.columns:
@@ -69,6 +83,10 @@ class DataProcessor:
 
         # Xóa dòng có giá trị bị thiếu hoặc không hợp lệ
         data = data.dropna()
+
+        # Xóa dữ liệu vô lý
+        data = data[data["kWh"] > 0]
+        data = data[data["Số tiền phải trả"] > 0]
 
         print("\n===== DỮ LIỆU SAU KHI LÀM SẠCH =====")
         print(data.head())
@@ -87,14 +105,16 @@ class DataProcessor:
         - y: biến cần dự đoán
 
         Trong bài này:
-        - X là cột Số tiền phải trả
-        - y là cột kWh
+        - X là cột kWh
+        - y là cột Số tiền phải trả
         """
 
         if target_column not in data.columns:
             raise ValueError(f"Không tìm thấy cột cần dự đoán: {target_column}")
 
-        X = data.drop(columns=[target_column])
+        # Sửa minimal: chỉ dùng kWh làm biến đầu vào
+        # Không dùng data.drop(columns=[target_column]) vì có thể lấy nhầm cột khác
+        X = data[["kWh"]]
         y = data[target_column]
 
         return X, y
