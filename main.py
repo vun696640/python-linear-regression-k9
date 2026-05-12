@@ -16,6 +16,7 @@ from src.linear_model import LinearRegressionModel
 from src.evaluator import ModelEvaluator
 from src.prediction_tester import PredictionTester
 from src.visualizer import Visualizer
+from IPython.display import Image, display
 
 
 def main():
