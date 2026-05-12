@@ -38,9 +38,12 @@ class PredictionTester:
 
         prediction = model.predict(new_df)
 
+        # Làm tròn kết quả dự đoán đến hàng đồng
+        prediction_value = round(prediction[0])
+
         print("\nDữ liệu mới:")
         print(new_df)
 
-        print("\nKết quả dự đoán số tiền phải trả:", prediction[0])
+        print("\nKết quả dự đoán số tiền phải trả:", f"{prediction_value:,} đồng")
 
-        return prediction[0]
+        return prediction_value
