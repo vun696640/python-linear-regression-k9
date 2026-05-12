@@ -103,6 +103,8 @@ def main():
         target_column=target_column
     )
 
+    display(Image("/content/python-linear-regression-k9/regression_chart.png"))
+
     # Bước 12: Kiểm thử với dữ liệu mới
     # Người dùng nhập kWh, mô hình dự đoán số tiền phải trả
     tester.test_new_data(model, X.columns)
