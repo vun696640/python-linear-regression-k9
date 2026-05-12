@@ -2,7 +2,7 @@
 # MODULE 5: VISUALIZER
 # Chức năng:
 # - Vẽ đồ thị hồi quy tuyến tính
-# - Hiển thị điểm dữ liệu thực tế
+# - Hiển thị các điểm dữ liệu thực tế
 # - Hiển thị đường dự đoán của mô hình
 # - In ra hàm số hồi quy tuyến tính cuối cùng
 # ============================================================
@@ -19,13 +19,13 @@ class Visualizer:
     - Vẽ đồ thị giữa dữ liệu thực tế và đường hồi quy tuyến tính
     - In ra phương trình hồi quy tuyến tính cuối cùng
 
-    Với bài này, mô hình có dạng:
+    Mô hình hồi quy tuyến tính có dạng:
 
     y = a * x + b
 
     Trong đó:
-    - x là Số tiền phải trả
-    - y là kWh
+    - x là biến đầu vào
+    - y là biến cần dự đoán
     - a là hệ số góc
     - b là hệ số chặn
     """
@@ -75,41 +75,59 @@ class Visualizer:
         """
         Vẽ đồ thị hồi quy tuyến tính.
 
+        Đồ thị hiển thị:
+        - Các điểm dữ liệu thực tế
+        - Đường hồi quy tuyến tính của mô hình
+
         Hàm này phù hợp nhất khi mô hình chỉ có 1 biến đầu vào.
-        Trong bài này:
-        - Trục X: Số tiền phải trả
-        - Trục Y: kWh
         """
 
-        # Lấy một cột đầu vào để vẽ đồ thị
+        # Lấy một cột đầu vào để vẽ trục X
         X_plot = X[[feature_column]]
 
-        # Sắp xếp dữ liệu theo trục X để đường hồi quy không bị gãy
+        # Tạo DataFrame chứa dữ liệu thực tế
         plot_data = pd.DataFrame({
             feature_column: X_plot[feature_column],
             target_column: y
         })
 
+        # Sắp xếp dữ liệu theo trục X
+        # Việc này giúp đường hồi quy không bị nối lung tung
         plot_data = plot_data.sort_values(by=feature_column)
 
+        # Tách lại dữ liệu sau khi sắp xếp
         X_sorted = plot_data[[feature_column]]
         y_sorted = plot_data[target_column]
 
-        # Dự đoán y theo dữ liệu X đã sắp xếp
+        # Dự đoán giá trị y theo các điểm X thực tế
         y_pred_sorted = model.predict(X_sorted)
 
+        # Tạo khung hình
         plt.figure(figsize=(8, 5))
 
-        # Vẽ điểm dữ liệu thực tế
-        plt.scatter(X_sorted[feature_column], y_sorted, label="Dữ liệu thực tế")
+        # Vẽ các điểm dữ liệu thực tế
+        plt.scatter(
+            X_sorted[feature_column],
+            y_sorted,
+            label="Điểm dữ liệu thực tế",
+            marker="o"
+        )
 
         # Vẽ đường hồi quy tuyến tính
-        plt.plot(X_sorted[feature_column], y_pred_sorted, label="Đường hồi quy tuyến tính")
+        plt.plot(
+            X_sorted[feature_column],
+            y_pred_sorted,
+            label="Đường hồi quy tuyến tính"
+        )
 
+        # Ghi tên trục và tiêu đề
         plt.xlabel(feature_column)
         plt.ylabel(target_column)
         plt.title("Đồ thị hồi quy tuyến tính")
+
+        # Hiển thị chú thích và lưới
         plt.legend()
         plt.grid(True)
 
+        # Hiển thị đồ thị
         plt.show()
