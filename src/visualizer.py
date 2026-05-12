@@ -19,13 +19,13 @@ class Visualizer:
     - Vẽ đồ thị giữa dữ liệu thực tế và đường hồi quy tuyến tính
     - In ra phương trình hồi quy tuyến tính cuối cùng
 
-    Mô hình hồi quy tuyến tính có dạng:
+    Với bài này, mô hình có dạng:
 
-    y = a * x + b
+    Số tiền phải trả = a * kWh + b
 
     Trong đó:
-    - x là biến đầu vào
-    - y là biến cần dự đoán
+    - x là kWh
+    - y là Số tiền phải trả
     - a là hệ số góc
     - b là hệ số chặn
     """
@@ -66,8 +66,8 @@ class Visualizer:
         print(equation)
 
         print("\nÝ nghĩa:")
-        print("- Hệ số của biến đầu vào cho biết khi biến đó tăng 1 đơn vị thì giá trị dự đoán thay đổi bao nhiêu.")
-        print("- Hệ số chặn là giá trị dự đoán khi tất cả biến đầu vào bằng 0.")
+        print("- Hệ số của kWh cho biết khi điện năng tiêu thụ tăng 1 kWh thì số tiền phải trả thay đổi bao nhiêu.")
+        print("- Hệ số chặn là số tiền dự đoán khi kWh bằng 0.")
 
         return equation
 
@@ -79,10 +79,18 @@ class Visualizer:
         - Các điểm dữ liệu thực tế
         - Đường hồi quy tuyến tính của mô hình
 
-        Hàm này phù hợp nhất khi mô hình chỉ có 1 biến đầu vào.
+        Với bài này:
+        - Trục X: kWh
+        - Trục Y: Số tiền phải trả
         """
 
-        # Lấy một cột đầu vào để vẽ trục X
+        # Kiểm tra cột đầu vào có tồn tại không
+        if feature_column not in X.columns:
+            print(f"\nKhông tìm thấy cột '{feature_column}' trong dữ liệu X.")
+            print("Các cột hiện có:", list(X.columns))
+            return
+
+        # Lấy cột đầu vào để vẽ trục X
         X_plot = X[[feature_column]]
 
         # Tạo DataFrame chứa dữ liệu thực tế
@@ -92,7 +100,6 @@ class Visualizer:
         })
 
         # Sắp xếp dữ liệu theo trục X
-        # Việc này giúp đường hồi quy không bị nối lung tung
         plot_data = plot_data.sort_values(by=feature_column)
 
         # Tách lại dữ liệu sau khi sắp xếp
@@ -103,14 +110,15 @@ class Visualizer:
         y_pred_sorted = model.predict(X_sorted)
 
         # Tạo khung hình
-        plt.figure(figsize=(8, 5))
+        plt.figure(figsize=(9, 6))
 
         # Vẽ các điểm dữ liệu thực tế
         plt.scatter(
             X_sorted[feature_column],
             y_sorted,
             label="Điểm dữ liệu thực tế",
-            marker="o"
+            marker="o",
+            s=45
         )
 
         # Vẽ đường hồi quy tuyến tính
@@ -123,11 +131,17 @@ class Visualizer:
         # Ghi tên trục và tiêu đề
         plt.xlabel(feature_column)
         plt.ylabel(target_column)
-        plt.title("Đồ thị hồi quy tuyến tính")
+        plt.title("Đồ thị hồi quy tuyến tính: kWh và số tiền phải trả")
 
         # Hiển thị chú thích và lưới
         plt.legend()
         plt.grid(True)
 
+        # Lưu ảnh để xem được trong Colab / Codespaces / GitHub
+        plt.savefig("regression_chart.png", dpi=300, bbox_inches="tight")
+
         # Hiển thị đồ thị
         plt.show()
+
+        print("\nĐã vẽ đồ thị hồi quy tuyến tính.")
+        print("Đã lưu biểu đồ vào file: regression_chart.png")
