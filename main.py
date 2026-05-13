@@ -17,6 +17,7 @@ from src.evaluator import ModelEvaluator
 from src.prediction_tester import PredictionTester
 from src.visualizer import Visualizer
 from IPython.display import Image, display
+from src.monthly_predictor import MonthlyElectricityPredictor
 
 
 def main():
@@ -42,6 +43,7 @@ def main():
     evaluator = ModelEvaluator()
     tester = PredictionTester()
     visualizer = Visualizer()
+    monthly_predictor = MonthlyElectricityPredictor()
 
     # Đường dẫn file dữ liệu trong project GitHub
     file_path = "data/energy_training.csv"
@@ -108,6 +110,15 @@ def main():
     # Bước 12: Kiểm thử với dữ liệu mới
     # Người dùng nhập kWh, mô hình dự đoán số tiền phải trả
     tester.test_new_data(model, X.columns)
+
+    # Bước 13: Dự đoán số điện trung bình theo tháng
+    monthly_file_path = "data/monthly_average.csv"
+    monthly_data = monthly_predictor.import_monthly_file(monthly_file_path)
+    monthly_data = monthly_predictor.clean_monthly_data(monthly_data)
+    monthly_model = monthly_predictor.train_monthly_model(monthly_data)
+    monthly_predictor.show_monthly_equation(monthly_model)
+    monthly_predictor.plot_monthly_trend(monthly_data, monthly_model)
+    monthly_predictor.predict_month(monthly_model)
 
 
 if __name__ == "__main__":
